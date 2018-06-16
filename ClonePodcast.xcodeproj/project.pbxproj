@@ -21,6 +21,8 @@
 		0714DECB20D37AC000A23347 /* PodcastCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0714DEC920D379E800A23347 /* PodcastCell.swift */; };
 		0714DECD20D3960500A23347 /* EpisodeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0714DECC20D3960500A23347 /* EpisodeTableViewController.swift */; };
 		0714DECF20D3994300A23347 /* Episode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0714DECE20D3994300A23347 /* Episode.swift */; };
+		0717EF1820D4A34B0038ECCF /* PlayerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717EF1720D4A34B0038ECCF /* PlayerDetailView.swift */; };
+		0717EF1920D4A4350038ECCF /* PlayerDetailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0717EF1520D49EA00038ECCF /* PlayerDetailView.xib */; };
 		07D33A0A20D3A75300B36C0D /* EpisodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D33A0820D3A75300B36C0D /* EpisodeCell.swift */; };
 		07D33A0B20D3A75300B36C0D /* EpisodeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 07D33A0920D3A75300B36C0D /* EpisodeCell.xib */; };
 		07D33A0E20D3B13700B36C0D /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D33A0D20D3B13700B36C0D /* String.swift */; };
@@ -46,6 +48,8 @@
 		0714DEC920D379E800A23347 /* PodcastCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastCell.swift; sourceTree = "<group>"; };
 		0714DECC20D3960500A23347 /* EpisodeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeTableViewController.swift; sourceTree = "<group>"; };
 		0714DECE20D3994300A23347 /* Episode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Episode.swift; sourceTree = "<group>"; };
+		0717EF1520D49EA00038ECCF /* PlayerDetailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlayerDetailView.xib; sourceTree = "<group>"; };
+		0717EF1720D4A34B0038ECCF /* PlayerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailView.swift; sourceTree = "<group>"; };
 		07D33A0820D3A75300B36C0D /* EpisodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCell.swift; sourceTree = "<group>"; };
 		07D33A0920D3A75300B36C0D /* EpisodeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EpisodeCell.xib; sourceTree = "<group>"; };
 		07D33A0D20D3B13700B36C0D /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -139,6 +143,8 @@
 				0714DEC920D379E800A23347 /* PodcastCell.swift */,
 				07D33A0820D3A75300B36C0D /* EpisodeCell.swift */,
 				07D33A0920D3A75300B36C0D /* EpisodeCell.xib */,
+				0717EF1520D49EA00038ECCF /* PlayerDetailView.xib */,
+				0717EF1720D4A34B0038ECCF /* PlayerDetailView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -230,6 +236,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0717EF1920D4A4350038ECCF /* PlayerDetailView.xib in Resources */,
 				0714DEB020D34E2E00A23347 /* LaunchScreen.storyboard in Resources */,
 				0714DEAD20D34E2E00A23347 /* Assets.xcassets in Resources */,
 				07D33A0B20D3A75300B36C0D /* EpisodeCell.xib in Resources */,
@@ -289,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0714DECB20D37AC000A23347 /* PodcastCell.swift in Sources */,
+				0717EF1820D4A34B0038ECCF /* PlayerDetailView.swift in Sources */,
 				0714DEA820D34E2D00A23347 /* ViewController.swift in Sources */,
 				0714DECD20D3960500A23347 /* EpisodeTableViewController.swift in Sources */,
 				07D33A0A20D3A75300B36C0D /* EpisodeCell.swift in Sources */,
