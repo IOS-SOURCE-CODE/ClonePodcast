@@ -76,7 +76,13 @@ class PlayerDetailView: UIView {
       self.removeFromSuperview()
    }
    
-  
+   @IBOutlet weak var currentTimeSlider: UISlider!
+   @IBOutlet weak var currentTimeLabel: UILabel!
+   @IBOutlet weak var durationLabel: UILabel!
+   
+   
+   
+   
    @IBOutlet weak var titleLabel: UILabel! {
       didSet {
          titleLabel.numberOfLines = 2
@@ -98,8 +104,28 @@ class PlayerDetailView: UIView {
    }
    
    
+   fileprivate func observePlayerCurrentTime() {
+      let interval = CMTimeMake(1, 2)
+      player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { (time) in
+         
+         self.currentTimeLabel.text = time.toDisplay()
+         let durationTime = self.player.currentItem?.duration
+         self.durationLabel.text = durationTime?.toDisplay()
+         self.updateTimeSlider()
+      }
+   }
+   
+   fileprivate func updateTimeSlider() {
+      let currentTimeSecond = CMTimeGetSeconds(player.currentTime())
+      let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(1, 1))
+      let percentage = currentTimeSecond / durationSeconds
+      self.currentTimeSlider.value = Float(percentage)
+   }
+   
    override func awakeFromNib() {
       super.awakeFromNib()
+      
+      observePlayerCurrentTime()
       
       let time = CMTimeMake(1,3)
       let times = [NSValue(time: time)]
