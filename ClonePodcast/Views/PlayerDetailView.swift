@@ -14,6 +14,8 @@ class PlayerDetailView: UIView {
    
    var episode: Episode! {
       didSet {
+         miniEpisodeTitleLabel.text = episode.title
+         
          titleLabel.text = episode.title
          authLabel.text = episode.author
          playEpisode()
@@ -21,16 +23,19 @@ class PlayerDetailView: UIView {
          
          guard let url = URL(string: episode.imageUrl ?? "") else { return }
          episodeImageView.sd_setImage(with: url, completed: nil)
+         miniEpisodeImageview.sd_setImage(with: url, completed: nil)
+         
          
       }
    }
    
    let player: AVPlayer = {
-   let avPlayer = AVPlayer()
-   avPlayer.automaticallyWaitsToMinimizeStalling = false
-   return avPlayer
+      let avPlayer = AVPlayer()
+      avPlayer.automaticallyWaitsToMinimizeStalling = false
+      return avPlayer
    }()
    
+
    fileprivate let shrunkenTransform = CGAffineTransform(scaleX: 0.7, y: 0.7)
    
    fileprivate func playEpisode() {
@@ -49,12 +54,35 @@ class PlayerDetailView: UIView {
    
    fileprivate func shrinkEpisodeImageView() {
       UIView.animate(withDuration: 0.75, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
-        self.episodeImageView.transform = self.shrunkenTransform
+         self.episodeImageView.transform = self.shrunkenTransform
       }, completion: nil)
    }
    
    
+   
+   
+   //MARK: - Mini Player Action and Outlet
+   
+   @IBOutlet weak var miniEpisodeImageview: UIImageView!
+   @IBOutlet weak var miniEpisodeTitleLabel: UILabel!
+   @IBOutlet weak var miniPlayPauseButton: UIButton! {
+      didSet {
+         miniPlayPauseButton.addTarget(self, action: #selector(handlePlayPause), for: .touchUpInside)
+      }
+   }
+   @IBOutlet weak var miniFastForwardButton: UIButton! {
+      didSet {
+         miniFastForwardButton.addTarget(self, action: #selector(handleFastForward(_:)), for: .touchUpInside)
+      }
+   }
+   
+   
    //MARK: - IBOutlet
+   
+   @IBOutlet weak var miniPlayerView: UIView!
+   @IBOutlet weak var maximizeStackView: UIStackView!
+   
+   
    @IBOutlet weak var playpauseButton: UIButton! {
       didSet {
          self.episodeImageView.transform = self.shrunkenTransform
@@ -69,7 +97,7 @@ class PlayerDetailView: UIView {
       didSet {
          episodeImageView.layer.cornerRadius = 5
          episodeImageView.clipsToBounds = true
-        
+         
       }
    }
    @IBOutlet weak var authLabel: UILabel!
@@ -85,9 +113,10 @@ class PlayerDetailView: UIView {
    
    //MARK: - IBAction
    @IBAction func onDismiss(_ sender: Any) {
-      self.removeFromSuperview()
+      let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+      mainTabBarController?.minizePlayerDetailView()
    }
-  
+   
    
    @IBAction func handleCurrentTimeSlider(_ sender: Any) {
       
@@ -101,7 +130,7 @@ class PlayerDetailView: UIView {
    
    
    @IBAction func handleRewind(_ sender: Any) {
-       seekToCurrentTime(delta: -15)
+      seekToCurrentTime(delta: -15)
    }
    
    @IBAction func handleFastForward(_ sender: Any) {
@@ -125,11 +154,13 @@ class PlayerDetailView: UIView {
    @objc func handlePlayPause() {
       
       if player.timeControlStatus == .paused {
-          playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+         playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+          miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
          player.play()
          self.enLargeEpisodeImageView()
       } else {
          playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+            miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          player.pause()
          shrinkEpisodeImageView()
       }
@@ -157,6 +188,8 @@ class PlayerDetailView: UIView {
    override func awakeFromNib() {
       super.awakeFromNib()
       
+     addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleMaximumPlayerDetail)))
+      
       observePlayerCurrentTime()
       
       let time = CMTimeMake(1,3)
@@ -172,4 +205,14 @@ class PlayerDetailView: UIView {
       print("Player Detail View memory being reclaimed....")
    }
    
+   
+   static func initFromNib() -> PlayerDetailView {
+      let playerDetailView = Bundle.main.loadNibNamed("PlayerDetailView", owner: self, options: nil)?.first as! PlayerDetailView
+      return playerDetailView
+   }
+   
+   @objc func handleMaximumPlayerDetail() {
+      let mainTabBarController = UIApplication.shared.keyWindow?.rootViewController as? MainTabBarController
+      mainTabBarController?.maximizePlayerDetailView(episode: nil)
+   }
 }
