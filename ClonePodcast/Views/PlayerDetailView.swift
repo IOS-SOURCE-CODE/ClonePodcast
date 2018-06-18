@@ -53,6 +53,8 @@ class PlayerDetailView: UIView {
       }, completion: nil)
    }
    
+   
+   //MARK: - IBOutlet
    @IBOutlet weak var playpauseButton: UIButton! {
       didSet {
          self.episodeImageView.transform = self.shrunkenTransform
@@ -71,24 +73,54 @@ class PlayerDetailView: UIView {
       }
    }
    @IBOutlet weak var authLabel: UILabel!
-   
-   @IBAction func onDismiss(_ sender: Any) {
-      self.removeFromSuperview()
-   }
-   
    @IBOutlet weak var currentTimeSlider: UISlider!
    @IBOutlet weak var currentTimeLabel: UILabel!
    @IBOutlet weak var durationLabel: UILabel!
-   
-   
-   
-   
    @IBOutlet weak var titleLabel: UILabel! {
       didSet {
          titleLabel.numberOfLines = 2
       }
       
    }
+   
+   //MARK: - IBAction
+   @IBAction func onDismiss(_ sender: Any) {
+      self.removeFromSuperview()
+   }
+  
+   
+   @IBAction func handleCurrentTimeSlider(_ sender: Any) {
+      
+      let percentage = currentTimeSlider.value
+      guard let duration = player.currentItem?.duration else { return }
+      let durationInSecond = CMTimeGetSeconds(duration)
+      let seekTimeInSecond = Float64(percentage) * durationInSecond
+      let seekTime = CMTimeMakeWithSeconds(seekTimeInSecond, 1)
+      player.seek(to: seekTime)
+   }
+   
+   
+   @IBAction func handleRewind(_ sender: Any) {
+       seekToCurrentTime(delta: -15)
+   }
+   
+   @IBAction func handleFastForward(_ sender: Any) {
+      seekToCurrentTime(delta: 15)
+   }
+   
+   @IBAction func handleValumeChangeSlider(_ sender: UISlider) {
+      player.volume = sender.value
+   }
+   
+   
+   
+   fileprivate func seekToCurrentTime(delta: Int64) {
+      let fifteenSeconds = CMTimeMake(delta, 1)
+      let seekTime = CMTimeAdd(player.currentTime(), fifteenSeconds)
+      player.seek(to: seekTime)
+   }
+   
+   
    
    @objc func handlePlayPause() {
       
@@ -106,12 +138,12 @@ class PlayerDetailView: UIView {
    
    fileprivate func observePlayerCurrentTime() {
       let interval = CMTimeMake(1, 2)
-      player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { (time) in
+      player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
          
-         self.currentTimeLabel.text = time.toDisplay()
-         let durationTime = self.player.currentItem?.duration
-         self.durationLabel.text = durationTime?.toDisplay()
-         self.updateTimeSlider()
+         self?.currentTimeLabel.text = time.toDisplay()
+         let durationTime = self?.player.currentItem?.duration
+         self?.durationLabel.text = durationTime?.toDisplay()
+         self?.updateTimeSlider()
       }
    }
    
@@ -129,9 +161,15 @@ class PlayerDetailView: UIView {
       
       let time = CMTimeMake(1,3)
       let times = [NSValue(time: time)]
-      player.addBoundaryTimeObserver(forTimes: times, queue: .main) {
-         self.enLargeEpisodeImageView()
+      
+      // Retain cycle
+      player.addBoundaryTimeObserver(forTimes: times, queue: .main) { [weak self] in
+         self?.enLargeEpisodeImageView()
       }
+   }
+   
+   deinit {
+      print("Player Detail View memory being reclaimed....")
    }
    
 }

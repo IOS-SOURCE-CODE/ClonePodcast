@@ -21,17 +21,20 @@ class APIService {
       
       let secureUrl = feedUrl.toSecureHttps()
       guard let url = URL(string: secureUrl) else { return }
-      let parser = FeedParser(URL: url)
-      parser.parseAsync { (result) in
+     
+      
+      DispatchQueue.global(qos: .background).async {
          
-         if let error = result.error {
-            print("Failed to parse xml feed:", error)
-            return
+         let parser = FeedParser(URL: url)
+         parser.parseAsync { (result) in
+            if let error = result.error {
+               print("Failed to parse xml feed:", error)
+               return
+            }
+            guard let feed = result.rssFeed else { return }
+            completion(feed.toEpisodes())
+            
          }
-         
-         guard let feed = result.rssFeed else { return }
-         completion(feed.toEpisodes())
-         
       }
    }
    
