@@ -24,6 +24,7 @@
 		0717EF1820D4A34B0038ECCF /* PlayerDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717EF1720D4A34B0038ECCF /* PlayerDetailView.swift */; };
 		0717EF1920D4A4350038ECCF /* PlayerDetailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0717EF1520D49EA00038ECCF /* PlayerDetailView.xib */; };
 		0717EF1B20D4CBE80038ECCF /* CMTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0717EF1A20D4CBE80038ECCF /* CMTime.swift */; };
+		07D150FA20D8B5A5001F158A /* UIApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D150F920D8B5A5001F158A /* UIApplication.swift */; };
 		07D33A0A20D3A75300B36C0D /* EpisodeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D33A0820D3A75300B36C0D /* EpisodeCell.swift */; };
 		07D33A0B20D3A75300B36C0D /* EpisodeCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 07D33A0920D3A75300B36C0D /* EpisodeCell.xib */; };
 		07D33A0E20D3B13700B36C0D /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07D33A0D20D3B13700B36C0D /* String.swift */; };
@@ -52,6 +53,7 @@
 		0717EF1520D49EA00038ECCF /* PlayerDetailView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PlayerDetailView.xib; sourceTree = "<group>"; };
 		0717EF1720D4A34B0038ECCF /* PlayerDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerDetailView.swift; sourceTree = "<group>"; };
 		0717EF1A20D4CBE80038ECCF /* CMTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CMTime.swift; sourceTree = "<group>"; };
+		07D150F920D8B5A5001F158A /* UIApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplication.swift; sourceTree = "<group>"; };
 		07D33A0820D3A75300B36C0D /* EpisodeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeCell.swift; sourceTree = "<group>"; };
 		07D33A0920D3A75300B36C0D /* EpisodeCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = EpisodeCell.xib; sourceTree = "<group>"; };
 		07D33A0D20D3B13700B36C0D /* String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				07D33A0F20D3B15800B36C0D /* UIImage.swift */,
 				07D33A1120D3B78100B36C0D /* RSSFeed.swift */,
 				0717EF1A20D4CBE80038ECCF /* CMTime.swift */,
+				07D150F920D8B5A5001F158A /* UIApplication.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -213,6 +216,11 @@
 				TargetAttributes = {
 					0714DEA120D34E2D00A23347 = {
 						CreatedOnToolsVersion = 9.4;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -309,6 +317,7 @@
 				0714DEA620D34E2D00A23347 /* AppDelegate.swift in Sources */,
 				07D33A0E20D3B13700B36C0D /* String.swift in Sources */,
 				0714DEB820D34E7700A23347 /* MainTabBarController.swift in Sources */,
+				07D150FA20D8B5A5001F158A /* UIApplication.swift in Sources */,
 				0714DEBB20D3637C00A23347 /* PodcastsSearchViewController.swift in Sources */,
 				0714DEC020D36EAC00A23347 /* SearchResult.swift in Sources */,
 				0714DEC520D3762800A23347 /* APIService.swift in Sources */,

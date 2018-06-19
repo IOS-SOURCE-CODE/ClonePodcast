@@ -19,9 +19,6 @@ class MainTabBarController: UITabBarController {
       setupViewControllers()
       setupPlayerDetailView()
       
-      
-//      perform(#selector(maximizePlayerDetailView), with: nil, afterDelay: 1)
-      
     }
    
    
@@ -30,12 +27,16 @@ class MainTabBarController: UITabBarController {
    let playerDetailView = PlayerDetailView.initFromNib()
    var minimizePlayerDetailTopConstraint: NSLayoutConstraint!
    var maxzimizePlayerDetailTopConstraint: NSLayoutConstraint!
+   var bottomPlayerDetailConstraint: NSLayoutConstraint!
+   
    fileprivate func setupPlayerDetailView() {
       
       view.insertSubview(playerDetailView, belowSubview: tabBar)
       playerDetailView.translatesAutoresizingMaskIntoConstraints = false
       
-      playerDetailView.bottomAnchor.constraint(equalTo: tabBar.bottomAnchor, constant: 0).isActive = true
+      bottomPlayerDetailConstraint = playerDetailView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: view.frame.height)
+      bottomPlayerDetailConstraint.isActive = true
+      
       playerDetailView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
       playerDetailView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
       
@@ -55,9 +56,11 @@ class MainTabBarController: UITabBarController {
    
    
    @objc func minizePlayerDetailView() {
-      maxzimizePlayerDetailTopConstraint.isActive = false
-      minimizePlayerDetailTopConstraint.isActive = true
       
+      maxzimizePlayerDetailTopConstraint.isActive = false
+      bottomPlayerDetailConstraint.constant = view.frame.height
+      minimizePlayerDetailTopConstraint.isActive = true
+    
       animationlayout()
       
       UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
@@ -72,9 +75,10 @@ class MainTabBarController: UITabBarController {
    
    func maximizePlayerDetailView(episode: Episode?) {
       
-      minimizePlayerDetailTopConstraint.isActive = false
+     minimizePlayerDetailTopConstraint.isActive = false
       maxzimizePlayerDetailTopConstraint.isActive = true
       maxzimizePlayerDetailTopConstraint.constant = 0
+      bottomPlayerDetailConstraint.constant = 0
       
       animationlayout()
       
