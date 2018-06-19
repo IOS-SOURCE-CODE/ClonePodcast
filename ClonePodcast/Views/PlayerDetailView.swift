@@ -19,7 +19,11 @@ class PlayerDetailView: UIView {
          miniEpisodeTitleLabel.text = episode.title
          titleLabel.text = episode.title
          authLabel.text = episode.author
+         
          setupPlayInfo()
+         
+         setupAudioSession()
+         
          playEpisode()
          
          guard let url = URL(string: episode.imageUrl ?? "") else { return }
@@ -29,7 +33,7 @@ class PlayerDetailView: UIView {
          miniEpisodeImageview.sd_setImage(with: url) { (image, _, _, _) in
             
             let image = self.episodeImageView.image ?? UIImage()
-           
+            
             let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { (_) -> UIImage in
                return image
             })
@@ -108,7 +112,7 @@ class PlayerDetailView: UIView {
    
    //MARK: - IBAction
    @IBAction func onDismiss(_ sender: Any) {
-       UIApplication.mainTabBarController()?.minizePlayerDetailView()
+      UIApplication.mainTabBarController()?.minizePlayerDetailView()
    }
    
    
@@ -138,12 +142,14 @@ class PlayerDetailView: UIView {
       player.volume = sender.value
    }
    
+   
+   //MARK: Defult Method
    override func awakeFromNib() {
       super.awakeFromNib()
       
       setupRemoteControl()
-      setupAudioSession()
       setupGestures()
+      setupInterruptionObserver()
       
       observePlayerCurrentTime()
       
@@ -174,7 +180,7 @@ extension PlayerDetailView {
          self.playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
          self.miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
          
-         self.setupElapseTime()
+         self.setupElapseTime(playbackRate: 1)
          
          return .success
       }
@@ -185,7 +191,8 @@ extension PlayerDetailView {
          self.playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          self.miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          
-         self.setupElapseTime()
+         self.setupElapseTime(playbackRate: 0)
+         
          return .success
       }
       
@@ -202,24 +209,24 @@ extension PlayerDetailView {
    }
    
    @objc func handlePreviousTrack() {
-
+      
       if playlistEpisodes.count == 0 {
          return
       }
       let currentEpisodeIndex = playlistEpisodes.index { ep in
          return self.episode.title == ep.title && self.episode.author == ep.author
       }
-
+      
       guard let index = currentEpisodeIndex else { return }
-
+      
       let previusEpisode: Episode
-
+      
       if index == 0 {
          previusEpisode = playlistEpisodes[playlistEpisodes.count - 1]
       } else {
          previusEpisode = playlistEpisodes[index - 1]
       }
-
+      
       self.episode = previusEpisode
       
    }
@@ -263,9 +270,11 @@ extension PlayerDetailView {
       MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
    }
    
-   fileprivate func setupElapseTime() {
+   fileprivate func setupElapseTime(playbackRate: Float) {
       let elapseTime = CMTimeGetSeconds(player.currentTime())
       MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyElapsedPlaybackTime] = elapseTime
+      
+      MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPNowPlayingInfoPropertyPlaybackRate] = playbackRate
    }
    
 }
@@ -315,11 +324,13 @@ extension PlayerDetailView {
          miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
          player.play()
          self.enLargeEpisodeImageView()
+         self.setupElapseTime(playbackRate: 1)
       } else {
          playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          player.pause()
          shrinkEpisodeImageView()
+         self.setupElapseTime(playbackRate: 0)
       }
    }
    
@@ -331,8 +342,6 @@ extension PlayerDetailView {
          self?.currentTimeLabel.text = time.toDisplay()
          let durationTime = self?.player.currentItem?.duration
          self?.durationLabel.text = durationTime?.toDisplay()
-         
-//         self?.setupLockscreenCurrentTime()
          
          self?.updateTimeSlider()
       }
@@ -349,6 +358,31 @@ extension PlayerDetailView {
       guard let duration = player.currentItem?.duration else { return }
       let durationInSecond = CMTimeGetSeconds(duration)
       MPNowPlayingInfoCenter.default().nowPlayingInfo?[MPMediaItemPropertyPlaybackDuration] = durationInSecond
+   }
+   
+   fileprivate func setupInterruptionObserver() {
+      NotificationCenter.default.addObserver(self, selector: #selector(hadleInteruption), name: .AVAudioSessionInterruption, object: nil)
+   }
+   
+   @objc fileprivate func hadleInteruption(notification: Notification) {
+      guard let userInfo = notification.userInfo else { return }
+      guard let type = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
+      if type == AVAudioSessionInterruptionType.began.rawValue {
+         playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+         miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+         
+      } else {
+         
+         guard let options = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
+         
+         if options == AVAudioSessionInterruptionOptions.shouldResume.rawValue {
+            player.play()
+            playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+            miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+         }
+         
+         
+      }
    }
 }
 
@@ -419,7 +453,7 @@ extension PlayerDetailView {
             
             self.maximizeStackView.transform = .identity
             if translation.y > 200 {
-                UIApplication.mainTabBarController()?.minizePlayerDetailView()
+               UIApplication.mainTabBarController()?.minizePlayerDetailView()
             }
             
          })
