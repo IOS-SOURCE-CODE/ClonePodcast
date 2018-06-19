@@ -56,6 +56,8 @@ class PlayerDetailView: UIView {
       
    }
    
+   var playlistEpisodes = [Episode]()
+   
    //MARK: - IBOutlet
    
    @IBOutlet weak var miniEpisodeImageview: UIImageView!
@@ -194,6 +196,55 @@ extension PlayerDetailView {
          return .success
       }
       
+      commandCenter.nextTrackCommand.addTarget(self, action: #selector(handleNextTrack))
+      commandCenter.previousTrackCommand.addTarget(self, action: #selector(handlePreviousTrack))
+      
+   }
+   
+   @objc func handlePreviousTrack() {
+
+      if playlistEpisodes.count == 0 {
+         return
+      }
+      let currentEpisodeIndex = playlistEpisodes.index { ep in
+         return self.episode.title == ep.title && self.episode.author == ep.author
+      }
+
+      guard let index = currentEpisodeIndex else { return }
+
+      let previusEpisode: Episode
+
+      if index == 0 {
+         previusEpisode = playlistEpisodes[playlistEpisodes.count - 1]
+      } else {
+         previusEpisode = playlistEpisodes[index - 1]
+      }
+
+      self.episode = previusEpisode
+      
+   }
+   
+   @objc func handleNextTrack() {
+      
+      if playlistEpisodes.count == 0 {
+         return
+      }
+      
+      let currentEpisodeIndex = playlistEpisodes.index { ep in
+         return self.episode.title == ep.title && self.episode.author == ep.author
+      }
+      
+      guard let index = currentEpisodeIndex else { return }
+      
+      let nextEpisode: Episode
+      
+      if index == playlistEpisodes.count - 1 {
+         nextEpisode = playlistEpisodes[0]
+      } else {
+         nextEpisode = playlistEpisodes[index + 1]
+      }
+      
+      self.episode = nextEpisode
    }
    
    fileprivate func setupAudioSession() {
@@ -314,7 +365,7 @@ extension PlayerDetailView {
    }
    
    @objc func handleMaximumPlayerDetail() {
-      UIApplication.mainTabBarController()?.maximizePlayerDetailView(episode: nil)
+      UIApplication.mainTabBarController()?.maximizePlayerDetailView(episode: nil, playingListEpisodes: self.playlistEpisodes)
    }
    
    @objc func handlePan(gesture: UIPanGestureRecognizer) {
@@ -337,7 +388,7 @@ extension PlayerDetailView {
          self.transform = .identity
          
          if translation.y < -space || velocity.y < -500 {
-            UIApplication.mainTabBarController()?.maximizePlayerDetailView(episode: nil)
+            UIApplication.mainTabBarController()?.maximizePlayerDetailView(episode: nil, playingListEpisodes: self.playlistEpisodes)
          } else {
             self.miniPlayerView.alpha = 1
             self.maximizeStackView.alpha = 0

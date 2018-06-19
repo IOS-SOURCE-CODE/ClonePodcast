@@ -9,9 +9,9 @@
 import UIKit
 
 class MainTabBarController: UITabBarController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
+   
+   override func viewDidLoad() {
+      super.viewDidLoad()
       
       UINavigationBar.appearance().prefersLargeTitles = true
       tabBar.tintColor = .purple
@@ -19,7 +19,7 @@ class MainTabBarController: UITabBarController {
       setupViewControllers()
       setupPlayerDetailView()
       
-    }
+   }
    
    
    
@@ -46,7 +46,7 @@ class MainTabBarController: UITabBarController {
       maxzimizePlayerDetailTopConstraint.isActive = true
       
       
-       // Minimize Player Detail top constraint
+      // Minimize Player Detail top constraint
       minimizePlayerDetailTopConstraint = playerDetailView.topAnchor.constraint(equalTo: tabBar.topAnchor, constant: -64)
       
       
@@ -60,12 +60,12 @@ class MainTabBarController: UITabBarController {
       maxzimizePlayerDetailTopConstraint.isActive = false
       bottomPlayerDetailConstraint.constant = view.frame.height
       minimizePlayerDetailTopConstraint.isActive = true
-    
+      
       animationlayout()
       
       UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
          
-        self.tabBar.transform = .identity
+         self.tabBar.transform = .identity
          self.playerDetailView.maximizeStackView.alpha = 0
          self.playerDetailView.miniPlayerView.alpha = 1
          
@@ -73,9 +73,9 @@ class MainTabBarController: UITabBarController {
       
    }
    
-   func maximizePlayerDetailView(episode: Episode?) {
+   func maximizePlayerDetailView(episode: Episode?, playingListEpisodes: [Episode] = []) {
       
-     minimizePlayerDetailTopConstraint.isActive = false
+      minimizePlayerDetailTopConstraint.isActive = false
       maxzimizePlayerDetailTopConstraint.isActive = true
       maxzimizePlayerDetailTopConstraint.constant = 0
       bottomPlayerDetailConstraint.constant = 0
@@ -86,12 +86,14 @@ class MainTabBarController: UITabBarController {
          playerDetailView.episode = episode
       }
       
+      playerDetailView.playlistEpisodes = playingListEpisodes
+      
       UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 1, options: .curveEaseOut, animations: {
          
          
          self.tabBar.transform = CGAffineTransform(translationX: 0, y: 100)
          self.playerDetailView.maximizeStackView.alpha = 1
-          self.playerDetailView.miniPlayerView.alpha = 0
+         self.playerDetailView.miniPlayerView.alpha = 0
          
       }, completion: nil)
       
@@ -118,9 +120,9 @@ class MainTabBarController: UITabBarController {
       let navController = UINavigationController(rootViewController: rootViewController)
       navController.tabBarItem.title = title
       navController.tabBarItem.image = image
-//      navController.navigationBar.prefersLargeTitles = true
+      //      navController.navigationBar.prefersLargeTitles = true
       rootViewController.navigationItem.title = title
-   
+      
       return navController
    }
    
