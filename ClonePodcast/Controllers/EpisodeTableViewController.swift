@@ -34,13 +34,23 @@ class EpisodeTableViewController: UITableViewController {
       }
    }
    
-   
    override func viewDidLoad() {
       super.viewDidLoad()
       
       setupTableView()
+      setupNavigationBarButton()
       
    }
+   
+   
+   //MARK: - Setup  view
+   fileprivate func setupNavigationBarButton() {
+      navigationItem.rightBarButtonItems = [
+         UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveFavorite))
+//         UIBarButtonItem(title: "Fetch", style: .plain, target: self, action: #selector(handleFetchSavePodcast))
+      ]
+   }
+   
    
    fileprivate func setupTableView() {
       tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
@@ -48,8 +58,10 @@ class EpisodeTableViewController: UITableViewController {
       tableView.register(nib, forCellReuseIdentifier: cellId)
       tableView.tableFooterView = UIView()
    }
-   
-   // MARK: - Table view data source
+}
+
+// MARK: - Table view data source
+extension EpisodeTableViewController {
    
    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
       
@@ -86,7 +98,36 @@ class EpisodeTableViewController: UITableViewController {
       UIApplication.mainTabBarController()?.maximizePlayerDetailView(episode: episode, playingListEpisodes: self.episodes)
       
    }
-   
-   
-   
 }
+
+
+// MARK: Handle Fetch and Save
+extension EpisodeTableViewController {
+   
+   @objc fileprivate func handleFetchSavePodcast() {
+      
+      guard let data = UserDefaults.standard.data(forKey: UserDefaults.favoritedPodcastKey) else { return }
+      let savedPodcasts = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Podcast]
+      
+      savedPodcasts?.forEach({print($0.trackName ?? "", $0.artistName ?? "")})
+   }
+   
+   @objc fileprivate func handleSaveFavorite() {
+      guard let podcast = self.podcast else { return }
+      
+      var listOfPodcast = UserDefaults.standard.savedPodcasts()
+      listOfPodcast.append(podcast)
+      
+      let data = NSKeyedArchiver.archivedData(withRootObject: listOfPodcast)
+      UserDefaults.standard.set(data, forKey: UserDefaults.favoritedPodcastKey)
+   }
+}
+
+
+
+
+
+
+
+
+
