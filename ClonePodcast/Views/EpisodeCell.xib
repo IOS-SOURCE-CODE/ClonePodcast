@@ -50,18 +50,28 @@
                             </label>
                         </subviews>
                     </stackView>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="100%" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cfe-On-OiK">
+                        <rect key="frame" x="45" y="66.5" width="46" height="20.5"/>
+                        <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                        <size key="shadowOffset" width="0.0" height="0.0"/>
+                    </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="cfe-On-OiK" firstAttribute="centerY" secondItem="5MW-3Q-2TU" secondAttribute="centerY" id="IIJ-gh-RX0"/>
                     <constraint firstAttribute="trailingMargin" secondItem="y8Q-3P-ATN" secondAttribute="trailing" id="K6Z-Ej-KLp"/>
                     <constraint firstItem="5MW-3Q-2TU" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="18" id="cK7-P4-xnC"/>
                     <constraint firstItem="5MW-3Q-2TU" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="eow-61-bGL"/>
                     <constraint firstItem="y8Q-3P-ATN" firstAttribute="leading" secondItem="5MW-3Q-2TU" secondAttribute="trailing" constant="16" id="gDE-d4-K51"/>
                     <constraint firstItem="y8Q-3P-ATN" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="h2e-Te-5nw"/>
+                    <constraint firstItem="cfe-On-OiK" firstAttribute="centerX" secondItem="5MW-3Q-2TU" secondAttribute="centerX" id="iPQ-Ne-287"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="descriptionLabel" destination="4e0-Kf-bbU" id="9mF-hx-Ng1"/>
+                <outlet property="downloadProgressLabel" destination="cfe-On-OiK" id="kws-wY-yem"/>
                 <outlet property="episodeImageView" destination="5MW-3Q-2TU" id="ZLc-bs-Vza"/>
                 <outlet property="pubDateLabel" destination="dut-6t-KY4" id="2dq-ei-Z6a"/>
                 <outlet property="titleLabel" destination="3VC-qW-8j8" id="bak-6D-ujP"/>

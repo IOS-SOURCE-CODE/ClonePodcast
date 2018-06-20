@@ -18,8 +18,6 @@ class EpisodeTableViewController: UITableViewController {
       }
    }
    
-   fileprivate let cellId = "CellID"
-   
    var episodes = [Episode]()
    
    fileprivate func fetchEpisodes() {
@@ -45,17 +43,27 @@ class EpisodeTableViewController: UITableViewController {
    
    //MARK: - Setup  view
    fileprivate func setupNavigationBarButton() {
-      navigationItem.rightBarButtonItems = [
-         UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveFavorite))
-//         UIBarButtonItem(title: "Fetch", style: .plain, target: self, action: #selector(handleFetchSavePodcast))
-      ]
+      
+      let savedPodcast = UserDefaults.standard.savedPodcasts()
+      let hasFavorited = savedPodcast.index { $0.trackName == self.podcast?.trackName && $0.artistName == self.podcast?.artistName
+      } != nil
+      
+      if hasFavorited {
+         navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "favorite"),  style: .plain, target: nil, action: nil)
+      } else {
+         navigationItem.rightBarButtonItems = [
+            UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveFavorite))
+         ]
+      }
+      
+    
    }
    
    
    fileprivate func setupTableView() {
-      tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellId)
+      tableView.register(UITableViewCell.self, forCellReuseIdentifier: EpisodeCell.cellId)
       let nib = UINib(nibName: "EpisodeCell", bundle: nil)
-      tableView.register(nib, forCellReuseIdentifier: cellId)
+      tableView.register(nib, forCellReuseIdentifier: EpisodeCell.cellId)
       tableView.tableFooterView = UIView()
    }
 }
@@ -82,7 +90,7 @@ extension EpisodeTableViewController {
    
    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       let episode = episodes[indexPath.row]
-      let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! EpisodeCell
+      let cell = tableView.dequeueReusableCell(withIdentifier: EpisodeCell.cellId, for: indexPath) as! EpisodeCell
       cell.episode = episode
       return cell
    }
@@ -92,11 +100,22 @@ extension EpisodeTableViewController {
    }
    
    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-      
       tableView.deselectRow(at: indexPath, animated: true)
       let episode = episodes[indexPath.row]
       UIApplication.mainTabBarController()?.maximizePlayerDetailView(episode: episode, playingListEpisodes: self.episodes)
+   }
+   
+   override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
       
+      let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
+         
+         let episode = self.episodes[indexPath.item]
+         UserDefaults.standard.downloadEpisode(episode: episode)
+         
+         // Download the episode
+         APIService.shared.downloadEpisode(episode: episode)
+      }
+      return [downloadAction]
    }
 }
 
@@ -118,8 +137,15 @@ extension EpisodeTableViewController {
       var listOfPodcast = UserDefaults.standard.savedPodcasts()
       listOfPodcast.append(podcast)
       
-      let data = NSKeyedArchiver.archivedData(withRootObject: listOfPodcast)
-      UserDefaults.standard.set(data, forKey: UserDefaults.favoritedPodcastKey)
+      UserDefaults.standard.savePodcasts(listOfPodcasts: listOfPodcast)
+      
+      showBadgeHighlight()
+      
+      navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "favorite"), style: .plain, target: nil, action: nil)
+   }
+   
+   fileprivate func showBadgeHighlight() {
+      UIApplication.mainTabBarController()?.viewControllers?[0].tabBarItem.badgeValue = "New"
    }
 }
 

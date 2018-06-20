@@ -53,13 +53,35 @@ class PlayerDetailView: UIView {
    fileprivate let shrunkenTransform = CGAffineTransform(scaleX: 0.7, y: 0.7)
    
    fileprivate func playEpisode() {
-      guard let url = URL(string: episode.streamUrl) else { return }
-      let playerItem = AVPlayerItem(url: url)
-      player.replaceCurrentItem(with: playerItem)
-      player.play()
       
+      if episode.fileUrl != nil {
+         
+        playEpisodeWithFileUrl()
+         
+      } else {
+         
+         guard let url = URL(string: episode.streamUrl) else { return }
+         let playerItem = AVPlayerItem(url: url)
+         player.replaceCurrentItem(with: playerItem)
+         player.play()
+         
+      }
    }
    
+   fileprivate func playEpisodeWithFileUrl() {
+      
+      guard let fileUrl = URL(string: episode.fileUrl ?? "") else { return }
+      let fileName = fileUrl.lastPathComponent
+      
+      guard var trueLocation = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+      
+      trueLocation.appendPathComponent(fileName)
+      
+      let playerItem = AVPlayerItem(url: trueLocation)
+      player.replaceCurrentItem(with: playerItem)
+      player.play()
+   }
+
    var playlistEpisodes = [Episode]()
    
    //MARK: - IBOutlet

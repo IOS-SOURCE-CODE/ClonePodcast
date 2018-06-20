@@ -108,7 +108,7 @@ class MainTabBarController: UITabBarController {
       
       let searchNavController = generateNavigationController(with: PodcastsSearchViewController(), title: "Search", image: #imageLiteral(resourceName: "search"))
      
-      let downloadNavController = generateNavigationController(with: ViewController(), title: "Downloads", image: #imageLiteral(resourceName: "downloaded"))
+      let downloadNavController = generateNavigationController(with: DownloadController(), title: "Downloads", image: #imageLiteral(resourceName: "downloaded"))
       
       viewControllers = [favoriteNavController,searchNavController, downloadNavController]
       

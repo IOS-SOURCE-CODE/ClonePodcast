@@ -10,12 +10,21 @@ import UIKit
 
 class FavoritesViewController: UICollectionViewController {
    
-   var podcasts = UserDefaults.standard.savedPodcasts()
+   var podcasts = [Podcast]()
    
    override func viewDidLoad() {
       super.viewDidLoad()
       
       setupCollectionView()
+      
+   }
+   
+   override func viewWillAppear(_ animated: Bool) {
+      super.viewWillAppear(animated)
+      
+      podcasts = UserDefaults.standard.savedPodcasts()
+      collectionView?.reloadData()
+      UIApplication.mainTabBarController()?.viewControllers?[0].tabBarItem.badgeValue = nil
       
    }
    
@@ -29,6 +38,8 @@ class FavoritesViewController: UICollectionViewController {
       collectionView?.addGestureRecognizer(gesture)
    }
    
+   
+   
    @objc fileprivate func handleLongPress(gesture: UILongPressGestureRecognizer) {
     
       let location = gesture.location(in: collectionView)
@@ -39,6 +50,8 @@ class FavoritesViewController: UICollectionViewController {
       let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { (_) in
          self.podcasts.remove(at: selectedIndexPath.item)
          self.collectionView?.deleteItems(at: [selectedIndexPath])
+         
+         UserDefaults.standard.deletePodcast(podcast: self.podcasts[selectedIndexPath.item])
          
       }
       let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -61,6 +74,12 @@ class FavoritesViewController: UICollectionViewController {
       cell.podcast = podcasts[indexPath.item]
       return cell
       
+   }
+   
+   override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+      let episodeController = EpisodeTableViewController()
+      episodeController.podcast = self.podcasts[indexPath.item]
+      self.navigationController?.pushViewController(episodeController, animated: true)
    }
    
    
