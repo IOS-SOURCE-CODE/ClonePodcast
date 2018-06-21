@@ -17,6 +17,9 @@ extension UserDefaults {
       
       do {
          var episodes = downloadedEpisodes()
+         
+         
+         
          episodes.append(episode)
          
          let data = try JSONEncoder().encode(episodes)
@@ -39,6 +42,24 @@ extension UserDefaults {
       }
       return []
    }
+   
+   func deleteDownloadedEpisode(episode: Episode) {
+      
+      do {
+         
+         let episodes = downloadedEpisodes()
+         let filterEpisodes = episodes.filter { $0.title != episode.title && $0.streamUrl != episode.streamUrl
+         }
+         
+         let data = try JSONEncoder().encode(filterEpisodes)
+         UserDefaults.standard.set(data, forKey: UserDefaults.downloadedEpisodesKey)
+         
+      } catch let error {
+         print("Failed to encode episode while delete episode: ", error)
+      }
+      
+   }
+   
    
    func savedPodcasts() -> [Podcast] {
       guard let savePodcastsData = UserDefaults.standard.data(forKey: UserDefaults.favoritedPodcastKey) else { return [] }

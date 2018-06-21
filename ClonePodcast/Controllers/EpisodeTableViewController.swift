@@ -110,6 +110,7 @@ extension EpisodeTableViewController {
       let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
          
          let episode = self.episodes[indexPath.item]
+         
          UserDefaults.standard.downloadEpisode(episode: episode)
          
          // Download the episode

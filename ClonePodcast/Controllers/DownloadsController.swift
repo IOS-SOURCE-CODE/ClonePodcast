@@ -79,6 +79,28 @@ extension DownloadController {
       let deleteAction = UITableViewRowAction(style: .destructive, title: "Delete") { (_, index) in
          let episode = self.episodes[indexPath.row]
          
+            do {
+
+               guard let fileUrl = URL(string: episode.fileUrl ?? "") else { return }
+               let fileName = fileUrl.lastPathComponent
+               
+               guard var trueLocation = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
+               
+               trueLocation.appendPathComponent(fileName)
+               
+               try FileManager.default.removeItem(at: trueLocation)
+               
+               UserDefaults.standard.deleteDownloadedEpisode(episode: episode)
+               
+               self.episodes.remove(at: indexPath.row)
+               tableView.beginUpdates()
+               tableView.deleteRows(at: [indexPath], with: .fade)
+               tableView.endUpdates()
+               
+            } catch let error {
+               debugPrint("Failed to delete file url \(episode.fileUrl ?? "" ): " , error)
+            }
+       
       }
       
       return [deleteAction]
