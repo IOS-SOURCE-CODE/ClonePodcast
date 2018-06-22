@@ -24,7 +24,7 @@ class PodcastsSearchViewController: UITableViewController {
       setupSearchBar()
       setupTableView()
       
-      searchBar(searchController.searchBar, textDidChange: "Voong")
+      searchBar(searchController.searchBar, textDidChange: "Npr")
       
    }
    
@@ -94,7 +94,6 @@ extension PodcastsSearchViewController:  UISearchBarDelegate {
    
    
    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-      
       timer?.invalidate()
       timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false, block: { _ in
          APIService.shared.fetchPodcasts(searchText: searchText) { (podcasts) in

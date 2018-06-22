@@ -22,8 +22,21 @@ class FavoritesViewController: UICollectionViewController {
    override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
       
-      podcasts = UserDefaults.standard.savedPodcasts()
-      collectionView?.reloadData()
+      let groupQueue = DispatchGroup()
+      
+      let workItem = DispatchWorkItem {
+          self.podcasts = UserDefaults.standard.savedPodcasts()
+         
+      }
+      
+     DispatchQueue.global(qos: .userInitiated).async(group: groupQueue, execute: workItem)
+   
+      
+      groupQueue.notify(queue: .main) {
+          self.collectionView?.reloadData()
+      }
+      
+     
       UIApplication.mainTabBarController()?.viewControllers?[0].tabBarItem.badgeValue = nil
       
    }
