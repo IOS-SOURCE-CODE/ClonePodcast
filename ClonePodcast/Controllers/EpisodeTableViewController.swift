@@ -50,6 +50,7 @@ class EpisodeTableViewController: UITableViewController {
       
       if hasFavorited {
          navigationItem.rightBarButtonItem = UIBarButtonItem(image: #imageLiteral(resourceName: "favorite"),  style: .plain, target: nil, action: nil)
+         navigationItem.rightBarButtonItem?.tintColor = .orange
       } else {
          navigationItem.rightBarButtonItems = [
             UIBarButtonItem(title: "Favorite", style: .plain, target: self, action: #selector(handleSaveFavorite))

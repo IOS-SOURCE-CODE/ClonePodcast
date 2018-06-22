@@ -80,6 +80,6 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="emptyImage" width="50" height="50"/>
+        <image name="emptyImage" width="36" height="24"/>
     </resources>
 </document>
