@@ -328,6 +328,19 @@ extension PlayerDetailView {
          self?.enLargeEpisodeImageView()
          self?.setupLockscreenCurrentTime()
       }
+      
+      NotificationCenter.default.addObserver(self, selector: #selector(handleFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: nil)
+      
+      
+      
+   }
+   
+   
+   @objc fileprivate func handleFinishPlaying(notification: Notification) {
+      debugPrint("End playing \(notification)")
+      playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+      miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+     
    }
    
    
@@ -347,7 +360,9 @@ extension PlayerDetailView {
          player.play()
          self.enLargeEpisodeImageView()
          self.setupElapseTime(playbackRate: 1)
-      } else {
+      }
+      
+      else {
          playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
          player.pause()

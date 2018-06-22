@@ -6,9 +6,13 @@
 //  Copyright © 2018 Hiem Seyha. All rights reserved.
 //
 
+
+
+
 import UIKit
 
 class DownloadController: UITableViewController {
+   
    
 
    var episodes = [Episode]()
@@ -146,6 +150,8 @@ extension DownloadController {
       
    }
 }
+
+
 
 
 

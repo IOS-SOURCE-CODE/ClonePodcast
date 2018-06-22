@@ -17,9 +17,7 @@ extension UserDefaults {
       
       do {
          var episodes = downloadedEpisodes()
-         
-         
-         
+
          episodes.append(episode)
          
          let data = try JSONEncoder().encode(episodes)

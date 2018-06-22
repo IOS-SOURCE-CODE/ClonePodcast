@@ -107,12 +107,17 @@ extension EpisodeTableViewController {
    
    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
       
+      let downloadedEpisodes = UserDefaults.standard.downloadedEpisodes()
+      let episode = self.episodes[indexPath.item]
+      
+      if downloadedEpisodes.contains(where: { (ep) -> Bool in
+         return ep.title == episode.title && ep.streamUrl == episode.streamUrl
+      }) {
+         return []
+      }
+      
       let downloadAction = UITableViewRowAction(style: .normal, title: "Download") { (_, _) in
-         
-         let episode = self.episodes[indexPath.item]
-         
          UserDefaults.standard.downloadEpisode(episode: episode)
-         
          // Download the episode
          APIService.shared.downloadEpisode(episode: episode)
       }
