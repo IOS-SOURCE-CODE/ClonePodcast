@@ -180,11 +180,23 @@ class PlayerDetailView: UIView {
    
 }
 
-//MARK: -  Self Helper
+
+//MARK: -  UI Helper
 extension PlayerDetailView {
+   
    static func initFromNib() -> PlayerDetailView {
       let playerDetailView = Bundle.main.loadNibNamed("PlayerDetailView", owner: self, options: nil)?.first as! PlayerDetailView
       return playerDetailView
+   }
+   
+   func stylePausePlayer() {
+      self.playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+      self.miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+   }
+   
+   func stylePlayingPlayer() {
+      self.playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+      self.miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
    }
 }
 
@@ -199,8 +211,8 @@ extension PlayerDetailView {
       commandCenter.playCommand.isEnabled = true
       commandCenter.playCommand.addTarget {  (_) -> MPRemoteCommandHandlerStatus in
          self.player.play()
-         self.playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
-         self.miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+        
+         self.stylePlayingPlayer()
          
          self.setupElapseTime(playbackRate: 1)
          
@@ -210,8 +222,8 @@ extension PlayerDetailView {
       commandCenter.pauseCommand.isEnabled = true
       commandCenter.pauseCommand.addTarget { (_) -> MPRemoteCommandHandlerStatus in
          self.player.pause()
-         self.playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-         self.miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+         
+        self.stylePausePlayer()
          
          self.setupElapseTime(playbackRate: 0)
          
@@ -329,18 +341,30 @@ extension PlayerDetailView {
          self?.setupLockscreenCurrentTime()
       }
       
-      NotificationCenter.default.addObserver(self, selector: #selector(handleFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: nil)
       
-      
-      
+      NotificationCenter.default.addObserver(self, selector: #selector(nextEpisode), name: .AVPlayerItemDidPlayToEndTime, object: nil)
    }
    
    
-   @objc fileprivate func handleFinishPlaying(notification: Notification) {
-      debugPrint("End playing \(notification)")
-      playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-      miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-     
+   @objc fileprivate func nextEpisode() {
+      
+     self.stylePausePlayer()
+      
+       let index = self.playlistEpisodes.index { [weak self] ep  in
+          return ep.title == self?.episode.title && ep.streamUrl == self?.episode.streamUrl
+      }
+      
+      guard let currentIndex = index else { return }
+   
+      if self.playlistEpisodes.count > currentIndex + 1 {
+          self.episode = self.playlistEpisodes[currentIndex + 1]
+      } else {
+         self.episode = self.playlistEpisodes[0]
+      }
+   
+      self.stylePlayingPlayer()
+      playEpisode()
+      
    }
    
    
@@ -355,16 +379,14 @@ extension PlayerDetailView {
    @objc func handlePlayPause() {
       
       if player.timeControlStatus == .paused {
-         playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
-         miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+         self.stylePlayingPlayer()
          player.play()
          self.enLargeEpisodeImageView()
          self.setupElapseTime(playbackRate: 1)
       }
       
       else {
-         playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-         miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+         self.stylePausePlayer()
          player.pause()
          shrinkEpisodeImageView()
          self.setupElapseTime(playbackRate: 0)
@@ -405,8 +427,7 @@ extension PlayerDetailView {
       guard let userInfo = notification.userInfo else { return }
       guard let type = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt else { return }
       if type == AVAudioSessionInterruptionType.began.rawValue {
-         playpauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
-         miniPlayPauseButton.setImage(#imageLiteral(resourceName: "pause"), for: .normal)
+        self.stylePausePlayer()
          
       } else {
          
@@ -414,8 +435,7 @@ extension PlayerDetailView {
          
          if options == AVAudioSessionInterruptionOptions.shouldResume.rawValue {
             player.play()
-            playpauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
-            miniPlayPauseButton.setImage(#imageLiteral(resourceName: "playing"), for: .normal)
+            self.stylePlayingPlayer()
          }
          
          
