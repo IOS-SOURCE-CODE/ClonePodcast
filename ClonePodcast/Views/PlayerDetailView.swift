@@ -243,50 +243,48 @@ extension PlayerDetailView {
    }
    
    @objc func handlePreviousTrack() {
-      
-      if playlistEpisodes.count == 0 {
-         return
+
+      handleTrack { (index) -> Episode in
+         if index == 0 {
+          return  playlistEpisodes[playlistEpisodes.count - 1]
+         } else {
+           return playlistEpisodes[index - 1]
+         }
       }
-      let currentEpisodeIndex = playlistEpisodes.index { ep in
-         return self.episode.title == ep.title && self.episode.author == ep.author
-      }
-      
-      guard let index = currentEpisodeIndex else { return }
-      
-      let previusEpisode: Episode
-      
-      if index == 0 {
-         previusEpisode = playlistEpisodes[playlistEpisodes.count - 1]
-      } else {
-         previusEpisode = playlistEpisodes[index - 1]
-      }
-      
-      self.episode = previusEpisode
       
    }
    
+   // Dry : Don't repeat yourself
    @objc func handleNextTrack() {
+      
+      handleTrack { (index) -> Episode in
+         if index == playlistEpisodes.count - 1 {
+               return playlistEpisodes[0]
+            } else {
+              return playlistEpisodes[index + 1]
+            }
+      }
+   }
+   
+   
+   // Instance Method
+   fileprivate func handleTrack(check nextOrPrevious: (_ withIndex: Int) -> Episode) {
       
       if playlistEpisodes.count == 0 {
          return
       }
-      
+    
       let currentEpisodeIndex = playlistEpisodes.index { ep in
          return self.episode.title == ep.title && self.episode.author == ep.author
       }
       
       guard let index = currentEpisodeIndex else { return }
       
-      let nextEpisode: Episode
-      
-      if index == playlistEpisodes.count - 1 {
-         nextEpisode = playlistEpisodes[0]
-      } else {
-         nextEpisode = playlistEpisodes[index + 1]
-      }
-      
-      self.episode = nextEpisode
+      self.episode = nextOrPrevious(index)
    }
+   
+   
+   
    
    fileprivate func setupAudioSession() {
       do {
