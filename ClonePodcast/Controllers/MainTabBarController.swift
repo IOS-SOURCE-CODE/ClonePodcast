@@ -99,6 +99,11 @@ class MainTabBarController: UITabBarController {
    }
    
    
+   func refreshPlaylist(playingListEpisodes: [Episode]) {
+      playerDetailView.playlistEpisodes = playingListEpisodes
+   }
+   
+   
    func setupViewControllers() {
       
       let layout = UICollectionViewFlowLayout()

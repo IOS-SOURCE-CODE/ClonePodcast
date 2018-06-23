@@ -12,8 +12,6 @@
 import UIKit
 
 class DownloadController: UITableViewController {
-   
-   
 
    var episodes = [Episode]()
    
@@ -103,6 +101,7 @@ extension DownloadController {
                tableView.beginUpdates()
                tableView.deleteRows(at: [indexPath], with: .fade)
                tableView.endUpdates()
+            UIApplication.mainTabBarController()?.refreshPlaylist(playingListEpisodes: self.episodes)
                
             } catch let error {
                debugPrint("Failed to delete file url \(episode.fileUrl ?? "" ): " , error)

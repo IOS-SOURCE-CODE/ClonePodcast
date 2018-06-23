@@ -19,19 +19,27 @@ class FavoritesViewController: UICollectionViewController {
       
    }
    
+   fileprivate func queueFetchFavorite() {
+      let groupQueue = DispatchGroup()
+      let workItem = DispatchWorkItem {
+         self.podcasts = UserDefaults.standard.savedPodcasts()
+      }
+      
+      DispatchQueue.global(qos: .background).async(group: groupQueue, execute: workItem)
+      
+      groupQueue.notify(queue: .main) {
+         self.collectionView?.reloadData()
+      }
+   }
+   
    override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
       
-      let groupQueue = DispatchGroup()
-      let workItem = DispatchWorkItem {
-          self.podcasts = UserDefaults.standard.savedPodcasts()
-      }
+      queueFetchFavorite()
       
-     DispatchQueue.global(qos: .background).async(group: groupQueue, execute: workItem)
       
-      groupQueue.notify(queue: .main) {
-          self.collectionView?.reloadData()
-      }
+//      self.podcasts = UserDefaults.standard.savedPodcasts()
+//      self.collectionView?.reloadData()
      
       UIApplication.mainTabBarController()?.viewControllers?[0].tabBarItem.badgeValue = nil
       
@@ -57,10 +65,10 @@ class FavoritesViewController: UICollectionViewController {
       let alertController = UIAlertController(title: "Remove Podcast?", message: nil, preferredStyle: .actionSheet)
       
       let deleteAction = UIAlertAction(title: "Delete", style: .destructive) { (_) in
+         
+          UserDefaults.standard.deletePodcast(podcast: self.podcasts[selectedIndexPath.item])
          self.podcasts.remove(at: selectedIndexPath.item)
          self.collectionView?.deleteItems(at: [selectedIndexPath])
-         
-         UserDefaults.standard.deletePodcast(podcast: self.podcasts[selectedIndexPath.item])
          
       }
       let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
